@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         new GithubQueryTask().execute(weatherUrlForecast,weatherUrlCurrent);
     }
 
+
     public class GithubQueryTask extends AsyncTask<URL, Void, String[]> {
 
         @Override
