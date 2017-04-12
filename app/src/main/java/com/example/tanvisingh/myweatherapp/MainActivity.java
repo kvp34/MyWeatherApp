@@ -27,8 +27,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        String apiKey=getString(R.string.open_weather_maps_app_id);
-        String apikey1=apiKey;
         mSearchBoxEditText = (EditText) findViewById(R.id.et_search_box);
         mUrlDisplayTextView = (TextView) findViewById(R.id.tv_url_display);
         mCurrentWeatherTextView = (TextView) findViewById(R.id.tv_current_weather);
