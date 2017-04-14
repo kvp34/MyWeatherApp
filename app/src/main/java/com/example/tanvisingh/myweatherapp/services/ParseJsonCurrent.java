@@ -25,9 +25,9 @@ public class ParseJsonCurrent {
         String parsedData ="";
 
         if (weatherJson!=null) {
-            double max;
-            double min;
-            double current;
+            Long max;
+            Long min;
+            Long current;
 
             JSONObject weatherObject = new JSONObject(weatherJson);
             JSONObject main = weatherObject.getJSONObject(W_MAIN);
@@ -47,9 +47,9 @@ public class ParseJsonCurrent {
                 }
             }
 
-            current = main.getDouble(W_TEMPERATURE);
-            max = main.getDouble(W_MAX);
-            min = main.getDouble(W_MIN);
+            current = main.getLong(W_TEMPERATURE);
+            max = main.getLong(W_MAX);
+            min = main.getLong(W_MIN);
 
             parsedData += "Today: " + current + ", Max: " + max + ", Min: " + min + "\r\n";
 

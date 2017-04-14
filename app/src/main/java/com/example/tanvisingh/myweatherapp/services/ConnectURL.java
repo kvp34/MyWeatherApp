@@ -22,17 +22,19 @@ public class ConnectURL {
 
     private static final String TAG = ConnectURL.class.getSimpleName();
     final static String BASE_URL_FORECAST =
-            "http://api.openweathermap.org/data/2.5/forecast";
+            "http://api.openweathermap.org/data/2.5/forecast/daily";
     final static String BASE_URL_CURRENT =
             "http://api.openweathermap.org/data/2.5/weather";
 
     final static String PARAM_QUERY = "q";
     final static String PARAM_UNIT="units";
-    final static String UNIT_VALUE="imperial";
-    public static URL buildUrlForecast(String githubSearchQuery) {
+    final static String PARAM_COUNT="cnt";
+    final static String COUNT_VALUE="5";
+    public static URL buildUrlForecast(String githubSearchQuery, String unit) {
         Uri builtUri = Uri.parse(BASE_URL_FORECAST).buildUpon()
                 .appendQueryParameter(PARAM_QUERY, githubSearchQuery)
-                .appendQueryParameter(PARAM_UNIT,UNIT_VALUE)
+                .appendQueryParameter(PARAM_UNIT,unit)
+                .appendQueryParameter(PARAM_COUNT,COUNT_VALUE)
                 .build();
 
         URL url = null;
@@ -45,10 +47,10 @@ public class ConnectURL {
         return url;
     }
 
-    public static URL buildUrlCurrent(String githubSearchQuery) {
+    public static URL buildUrlCurrent(String githubSearchQuery, String unit) {
         Uri builtUri = Uri.parse(BASE_URL_CURRENT).buildUpon()
                 .appendQueryParameter(PARAM_QUERY, githubSearchQuery)
-                .appendQueryParameter(PARAM_UNIT,UNIT_VALUE)
+                .appendQueryParameter(PARAM_UNIT,unit)
                 .build();
 
         URL url = null;

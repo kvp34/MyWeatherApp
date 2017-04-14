@@ -19,28 +19,39 @@ import java.lang.*;
 
 public class MainActivity extends AppCompatActivity {
     private EditText mSearchBoxEditText;
-    private TextView mUrlDisplayTextView;
     private TextView mCurrentWeatherTextView;
     private TextView mSearchResultsTextView;
     private ProgressBar mLoadingIndicator;
+    private  Switch mWeatherUnit;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mSearchBoxEditText = (EditText) findViewById(R.id.et_search_box);
-        mUrlDisplayTextView = (TextView) findViewById(R.id.tv_url_display);
         mCurrentWeatherTextView = (TextView) findViewById(R.id.tv_current_weather);
         mSearchResultsTextView = (TextView) findViewById(R.id.tv_search_results_five_days);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
+        mWeatherUnit=(Switch)findViewById(R.id.s_weather_unit);
 
+        mWeatherUnit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked)
+                {
+                    searchWeather("Metric");
+                }
+                else {
+                    searchWeather("Imperial");
+                }
+            }
+        });
 
     }
 
-    private void searchWeather() {
+    private void searchWeather(String unitValue) {
         String searchQuery = mSearchBoxEditText.getText().toString();
-        URL weatherUrlForecast = ConnectURL.buildUrlForecast(searchQuery);
-        URL weatherUrlCurrent = ConnectURL.buildUrlCurrent(searchQuery);
-        mUrlDisplayTextView.setText(weatherUrlForecast.toString());
+        URL weatherUrlForecast = ConnectURL.buildUrlForecast(searchQuery,unitValue);
+        URL weatherUrlCurrent = ConnectURL.buildUrlCurrent(searchQuery,unitValue);
         new GithubQueryTask().execute(weatherUrlForecast,weatherUrlCurrent);
     }
 
@@ -102,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemThatWasClickedId = item.getItemId();
         if (itemThatWasClickedId == R.id.action_search) {
-            searchWeather();
+            searchWeather("Imperial");
             return true;
         }
         return super.onOptionsItemSelected(item);

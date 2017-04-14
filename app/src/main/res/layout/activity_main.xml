@@ -19,13 +19,14 @@
         android:hint="Enter a query, then click Search"
         android:textSize="22sp" />
 
-    <TextView
-        android:id="@+id/tv_url_display"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Click search and your URL will show up here!"
-        android:textSize="22sp" />
+   <Switch
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:id="@+id/s_weather_unit"
+       android:text="unit"
+       android:textOn="C"
+       android:textOff="F"
+       android:checked="false"/>
     <TextView
         android:id="@+id/tv_current_weather"
         android:layout_width="wrap_content"
