@@ -16,7 +16,7 @@ import java.net.*;
 import java.io.*;
 import java.lang.*;
 
-
+//Cecilia was here
 public class MainActivity extends AppCompatActivity {
     private EditText mSearchBoxEditText;
     private TextView mCurrentWeatherTextView;
