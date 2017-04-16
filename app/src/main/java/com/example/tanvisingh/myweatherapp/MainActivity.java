@@ -9,6 +9,8 @@ import android.app.Activity;
 import com.example.tanvisingh.myweatherapp.services.ConnectURL;
 import com.example.tanvisingh.myweatherapp.services.ParseJsonCurrent;
 import com.example.tanvisingh.myweatherapp.services.ParseJsonMultiple;
+import com.example.tanvisingh.myweatherapp.services.WeatherDetails;
+import com.example.tanvisingh.myweatherapp.services.WeatherDetailsMultiple;
 
 import org.json.JSONException;
 
@@ -85,15 +87,21 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String[] weatherSearchResults) {
-            String result0=null;
-            String result1=null;
+            String result0="";
+            String result1="";
             mLoadingIndicator.setVisibility(View.INVISIBLE);
             if (weatherSearchResults[0] != null && !weatherSearchResults[0].equals("")
                     && weatherSearchResults[1] != null && !weatherSearchResults[1].equals("")) {
                 ParseJsonMultiple parseJson = new ParseJsonMultiple();
                 try {
-                    result0 = ParseJsonMultiple.getWeatherStringsMultiple(MainActivity.this, weatherSearchResults[0]);
-                    result1 = ParseJsonCurrent.getWeatherStringsCurrent(MainActivity.this, weatherSearchResults[1]);
+                    WeatherDetailsMultiple wdm = ParseJsonMultiple.getWeatherStringsMultiple(MainActivity.this, weatherSearchResults[0]);
+                    for (int i=0;i<wdm.getMultipleDays().size();i++){
+                        result0+=wdm.getMultipleDays().get(i).getMaxTemp()+" "+wdm.getMultipleDays().get(i).getMinTemp()+"\r\n";
+                    }
+                    WeatherDetails wd=ParseJsonCurrent.getWeatherStringsCurrent(MainActivity.this, weatherSearchResults[1]);
+                    result1= result1+"Current: "+wd.getCurrentTemp()+ "\r\nMax: "+wd.getMaxTemp()+"\r\nMin: "+wd.getMinTemp()
+                            +"\r\nHumidity: "+wd.getHumidity()+"\r\nDescription: "+wd.getWeatherMain()+"\r\nIcon: "+wd.getWeatherIconId()
+                            +"\r\nWindSpeed: "+wd.getWindSpeed();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

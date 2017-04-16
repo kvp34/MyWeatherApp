@@ -9,6 +9,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by KaranPatel on 4/10/2017.
@@ -16,7 +18,7 @@ import java.net.HttpURLConnection;
 
 public class ParseJsonMultiple {
     private static String TAG= ParseJsonMultiple.class.getSimpleName();
-    public static String getWeatherStringsMultiple(Context context, String weatherJson)
+    public static WeatherDetailsMultiple getWeatherStringsMultiple(Context context, String weatherJson)
             throws JSONException {
 
         final String W_MAX = "max";
@@ -25,7 +27,8 @@ public class ParseJsonMultiple {
         final String W_MAIN = "main";
         final String W_CODE = "cod";
         final String W_TEMP = "temp";
-        String parsedData ="";
+        final String W_DATE="dt";
+        WeatherDetailsMultiple wdm=new WeatherDetailsMultiple();
         if (weatherJson != null) {
             JSONObject weatherObject = new JSONObject(weatherJson);
             JSONArray weatherArray = weatherObject.getJSONArray(W_LIST);
@@ -45,22 +48,24 @@ public class ParseJsonMultiple {
                 }
             }
 
+            List<WeatherDetails> list = new ArrayList<>();
             for (int i = 0; i < weatherArray.length(); i++) {
                 Long max;
                 Long min;
-
+                WeatherDetails wd=new WeatherDetails();
                 JSONObject w = weatherArray.getJSONObject(i);
                 JSONObject temp=w.getJSONObject(W_TEMP);
-                max = temp.getLong(W_MAX);
-                min = temp.getLong(W_MIN);
+                wd.setDate(String.valueOf(w.getLong(W_DATE)));
+                wd.setMaxTemp(String.valueOf(temp.getLong(W_MAX)));
+                wd.setMinTemp(String.valueOf(temp.getLong(W_MIN)));
 
-                parsedData += "Max: " + max + " , Min: " + min + "\r\n";
-
+                list.add(wd);
             }
+            wdm.setMultipleDays(list);
 
         }
         else
         {Log.e(TAG, "Couldn't get response from server.");}
-        return parsedData;
+        return wdm;
     }
 }
