@@ -1,7 +1,6 @@
 package com.example.tanvisingh.myweatherapp.services;
 
 import android.content.Context;
-import android.nfc.Tag;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -24,14 +23,17 @@ public class ParseJsonMultiple {
         final String W_MAX = "max";
         final String W_MIN = "min";
         final String W_LIST = "list";
-        final String W_MAIN = "main";
+        final String W_WEATHER = "weather";
         final String W_CODE = "cod";
         final String W_TEMP = "temp";
         final String W_DATE="dt";
+        final String W_WEATHER_MAIN="main";
+        final String W_ICONID="icon";
         WeatherDetailsMultiple wdm=new WeatherDetailsMultiple();
         if (weatherJson != null) {
             JSONObject weatherObject = new JSONObject(weatherJson);
-            JSONArray weatherArray = weatherObject.getJSONArray(W_LIST);
+            JSONArray listArray = weatherObject.getJSONArray(W_LIST);
+
 
             if (weatherObject.has(W_CODE)) {
                 int errorCode = weatherObject.getInt(W_CODE);
@@ -49,15 +51,19 @@ public class ParseJsonMultiple {
             }
 
             List<WeatherDetails> list = new ArrayList<>();
-            for (int i = 0; i < weatherArray.length(); i++) {
+            for (int i = 0; i < listArray.length(); i++) {
                 Long max;
                 Long min;
                 WeatherDetails wd=new WeatherDetails();
-                JSONObject w = weatherArray.getJSONObject(i);
+                JSONObject w = listArray.getJSONObject(i);
                 JSONObject temp=w.getJSONObject(W_TEMP);
                 wd.setDate(String.valueOf(w.getLong(W_DATE)));
                 wd.setMaxTemp(String.valueOf(temp.getLong(W_MAX)));
                 wd.setMinTemp(String.valueOf(temp.getLong(W_MIN)));
+                JSONArray weatherArray=w.getJSONArray(W_WEATHER);
+                JSONObject main=weatherArray.getJSONObject(0);
+                wd.setWeatherMain(main.getString(W_WEATHER_MAIN));
+                wd.setWeatherIconId(main.getString(W_ICONID));
 
                 list.add(wd);
             }

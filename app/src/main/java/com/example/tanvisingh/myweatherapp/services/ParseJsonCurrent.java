@@ -27,6 +27,7 @@ public class ParseJsonCurrent {
         final String W_WIND_OBJECT="wind";
         final String W_ICONID="icon";
         final String W_SPEED="speed";
+        final String W_CITY_NAME="name";
 
         WeatherDetails wd = null;
         if (weatherJson != null) {
@@ -59,7 +60,9 @@ public class ParseJsonCurrent {
             wd.setHumidity(String.valueOf(main.getLong(W_HUMIDITY)));
             wd.setWeatherMain(descriptionMain.getString(W_MAIN));
             wd.setWeatherIconId(descriptionMain.getString(W_ICONID));
+            wd.setCityName(weatherObject.getString(W_CITY_NAME));
             wd.setWindSpeed(String.valueOf(wind.getLong(W_SPEED)));
+
         } else {
             Log.e(TAG, "Couldn't get response from server.");
         }

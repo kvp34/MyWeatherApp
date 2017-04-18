@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         mSearchResultsTextView = (TextView) findViewById(R.id.tv_search_results_five_days);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
         mWeatherUnit=(Switch)findViewById(R.id.s_weather_unit);
-
+        defaultWeather("Imperial");
         mWeatherUnit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -49,7 +49,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
+    private void defaultWeather(String unitValue) {
+        String lat ="40.497604";
+        String longt ="-74.488487";
+        URL weatherUrlForecast = ConnectURL.buildUrlForecastLatLong(lat,longt,unitValue);
+        URL weatherUrlCurrent = ConnectURL.buildUrlCurrentLatLong(lat,longt,unitValue);
+        new GithubQueryTask().execute(weatherUrlForecast,weatherUrlCurrent);
+    }
     private void searchWeather(String unitValue) {
         String searchQuery = mSearchBoxEditText.getText().toString();
         URL weatherUrlForecast = ConnectURL.buildUrlForecast(searchQuery,unitValue);
@@ -96,10 +102,12 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     WeatherDetailsMultiple wdm = ParseJsonMultiple.getWeatherStringsMultiple(MainActivity.this, weatherSearchResults[0]);
                     for (int i=0;i<wdm.getMultipleDays().size();i++){
-                        result0+=wdm.getMultipleDays().get(i).getMaxTemp()+" "+wdm.getMultipleDays().get(i).getMinTemp()+"\r\n";
+                        result0+=wdm.getMultipleDays().get(i).getDate()+" "+wdm.getMultipleDays().get(i).getMaxTemp()+" "
+                                +wdm.getMultipleDays().get(i).getMinTemp()+" "+wdm.getMultipleDays().get(i).getWeatherMain()+" "+
+                                wdm.getMultipleDays().get(i).getWeatherIconId()+"\r\n";
                     }
                     WeatherDetails wd=ParseJsonCurrent.getWeatherStringsCurrent(MainActivity.this, weatherSearchResults[1]);
-                    result1= result1+"Current: "+wd.getCurrentTemp()+ "\r\nMax: "+wd.getMaxTemp()+"\r\nMin: "+wd.getMinTemp()
+                    result1= result1+"City: "+wd.getCityName()+"\r\nCurrent: "+wd.getCurrentTemp()+ "\r\nMax: "+wd.getMaxTemp()+"\r\nMin: "+wd.getMinTemp()
                             +"\r\nHumidity: "+wd.getHumidity()+"\r\nDescription: "+wd.getWeatherMain()+"\r\nIcon: "+wd.getWeatherIconId()
                             +"\r\nWindSpeed: "+wd.getWindSpeed();
                 } catch (JSONException e) {
@@ -122,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
         int itemThatWasClickedId = item.getItemId();
         if (itemThatWasClickedId == R.id.action_search) {
             searchWeather("Imperial");
+            //defaultWeather("Imperial");
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -15,6 +15,15 @@ public class WeatherDetails {
     private String weatherIconId;
     private String windSpeed;
     private String date;
+    private String cityName;
+    public String getCityName() {
+        return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
+    }
+
 
     public String getDate() {
         return date;

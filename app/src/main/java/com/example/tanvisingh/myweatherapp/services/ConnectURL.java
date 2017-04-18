@@ -30,6 +30,8 @@ public class ConnectURL {
     final static String PARAM_UNIT="units";
     final static String PARAM_COUNT="cnt";
     final static String COUNT_VALUE="5";
+    final static String PARAM_LAT = "lat";
+    final static String PARAM_LONG = "lon";
     public static URL buildUrlForecast(String githubSearchQuery, String unit) {
         Uri builtUri = Uri.parse(BASE_URL_FORECAST).buildUpon()
                 .appendQueryParameter(PARAM_QUERY, githubSearchQuery)
@@ -51,6 +53,40 @@ public class ConnectURL {
         Uri builtUri = Uri.parse(BASE_URL_CURRENT).buildUpon()
                 .appendQueryParameter(PARAM_QUERY, githubSearchQuery)
                 .appendQueryParameter(PARAM_UNIT,unit)
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
+    public static URL buildUrlCurrentLatLong(String lat, String longt, String unit) {
+        Uri builtUri = Uri.parse(BASE_URL_CURRENT).buildUpon()
+                .appendQueryParameter(PARAM_LAT, lat)
+                .appendQueryParameter(PARAM_LONG,longt)
+                .appendQueryParameter(PARAM_UNIT,unit)
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+    public static URL buildUrlForecastLatLong(String lat, String longt, String unit) {
+        Uri builtUri = Uri.parse(BASE_URL_FORECAST).buildUpon()
+                .appendQueryParameter(PARAM_LAT, lat)
+                .appendQueryParameter(PARAM_LONG,longt)
+                .appendQueryParameter(PARAM_UNIT,unit)
+                .appendQueryParameter(PARAM_COUNT,COUNT_VALUE)
                 .build();
 
         URL url = null;
