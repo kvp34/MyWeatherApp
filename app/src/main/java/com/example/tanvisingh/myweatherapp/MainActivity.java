@@ -1,5 +1,5 @@
 package com.example.tanvisingh.myweatherapp;
-
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.*;
 import android.widget.*;
@@ -20,11 +20,27 @@ import java.lang.*;
 
 //Cecilia was here
 public class MainActivity extends AppCompatActivity {
+    public static final int REQUEST_CODE_ONE = 100;
     private EditText mSearchBoxEditText;
     private TextView mCurrentWeatherTextView;
     private TextView mSearchResultsTextView;
     private ProgressBar mLoadingIndicator;
     private  Switch mWeatherUnit;
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode==REQUEST_CODE_ONE) {
+            if (resultCode==RESULT_OK) {
+                String Longitude = data.getStringExtra("Longitude");
+                String Latitude = data.getStringExtra("Latitude");
+                defaultWeather("Imperial",Longitude,Latitude);
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +50,10 @@ public class MainActivity extends AppCompatActivity {
         mSearchResultsTextView = (TextView) findViewById(R.id.tv_search_results_five_days);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
         mWeatherUnit=(Switch)findViewById(R.id.s_weather_unit);
-        defaultWeather("Imperial");
+        Intent intent = new Intent(getApplicationContext(),LocationActivity.class);
+        intent.putExtra("latitude","40.497604");//our default values are for Summit, NJ
+        intent.putExtra("longitude","-74.488487");
+        startActivityForResult(intent, REQUEST_CODE_ONE);
         mWeatherUnit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -49,9 +68,12 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-    private void defaultWeather(String unitValue) {
-        String lat ="40.497604";
-        String longt ="-74.488487";
+    private void defaultWeather(String unitValue,String longt, String lat) {
+        if (lat=="")
+            lat ="40.497604";
+        if (longt=="")
+            longt ="-74.488487"; //Set some default values for Summit, NJ rather than nothing
+
         URL weatherUrlForecast = ConnectURL.buildUrlForecastLatLong(lat,longt,unitValue);
         URL weatherUrlCurrent = ConnectURL.buildUrlCurrentLatLong(lat,longt,unitValue);
         new GithubQueryTask().execute(weatherUrlForecast,weatherUrlCurrent);
