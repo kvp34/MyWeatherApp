@@ -3,39 +3,22 @@ package com.example.tanvisingh.myweatherapp;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.Switch;
-import android.widget.TextView;
+
 
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 
-import java.io.IOException;
 
-import static android.R.attr.onClick;
 
 public class LocationActivity extends AppCompatActivity {
-    TextView txtLabel;
-    Button btnTwo;
 
-    private TextView mLocationWeatherTextView;
-    private EditText mSearchBoxEditText;
-    private TextView mCurrentWeatherTextView;
-    private TextView mSearchResultsTextView;
-    private ProgressBar mLoadingIndicator;
-    private Switch mWeatherUnit;
+
     private LocationManager locationManager;
     private LocationListener locationListener;
     private String latitude;
@@ -44,11 +27,11 @@ public class LocationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_location);
+       // setContentView(R.layout.activity_location);
         latitude = getIntent().getStringExtra("latitude");
         longitude = getIntent().getStringExtra("longitude");
-        txtLabel = (TextView) findViewById(R.id.mylocation_weather);
-        btnTwo = (Button) findViewById(R.id.locationbutton);
+       // txtLabel = (TextView) findViewById(R.id.mylocation_weather);
+        //btnTwo = (Button) findViewById(R.id.locationbutton);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {
             @Override
@@ -87,7 +70,11 @@ public class LocationActivity extends AppCompatActivity {
             }
         }
         //configureButton();
-        locationManager.requestLocationUpdates("gps", 5000, 0, locationListener); //send back the default current weather
+        try {
+            locationManager.requestLocationUpdates("gps", 2000, 0, locationListener);
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }; //send back the default current weather
     }
 
 
@@ -96,12 +83,17 @@ public class LocationActivity extends AppCompatActivity {
         switch (requestCode) {
             case 10:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    configureButton();
+                    //configureButton();
+                    try {
+                        locationManager.requestLocationUpdates("gps", 2000, 0, locationListener);
+                    } catch (SecurityException e) {
+                        e.printStackTrace();
+                    }
                 return;
         }
     }
 
-    private void configureButton() {
+ /*   private void configureButton() {
         btnTwo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,6 +103,6 @@ public class LocationActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-        });
-    }
+        });}
+  */
 }
