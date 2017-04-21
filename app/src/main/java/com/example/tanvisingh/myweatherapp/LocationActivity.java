@@ -32,10 +32,10 @@ public class LocationActivity extends AppCompatActivity {
         latitude = getIntent().getStringExtra("latitude");
         longitude = getIntent().getStringExtra("longitude");
 
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        locationListener = new LocationListener() {
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);  //use the android location manager api for location
+        locationListener = new LocationListener() {  //upon location updates, this listener will be called.
             @Override
-            public void onLocationChanged(Location location) {
+            public void onLocationChanged(Location location) {  //when device location changes, send values to main to get the current weather
                 locationManager.removeUpdates(locationListener);
                 Intent intent = new Intent();
                 intent.putExtra("Longitude", String.valueOf(location.getLongitude()));
@@ -56,9 +56,10 @@ public class LocationActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onProviderDisabled(String provider) {
+            public void onProviderDisabled(String provider) {  //if no permission to access gps on this device, have user provide permission
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 startActivity(intent);
+                return;
             }
         };
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -87,6 +88,13 @@ public class LocationActivity extends AppCompatActivity {
                     } catch (SecurityException e) {
                         e.printStackTrace();
                     }
+                else {
+                    Intent intent = new Intent();
+                    intent.putExtra("Longitude", String.valueOf(longitude));
+                    intent.putExtra("Latitude", String.valueOf(latitude));
+                    setResult(RESULT_CANCELED, intent);
+                    finish();
+                }
                 return;
         }
         return;

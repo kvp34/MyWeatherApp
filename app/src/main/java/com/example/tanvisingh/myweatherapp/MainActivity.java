@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
                 defaultWeather("Imperial",longitude,latitude);
             }
             else {
-                defaultWeather("Imperial", longitude, latitude);//our default values are for Summit, NJ
+                defaultWeather("Imperial", longitude, latitude);//our default values are for Somerset, NJ
             }
         }
 
@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
         mWeatherUnit=(Switch)findViewById(R.id.s_weather_unit);
         Intent intent = new Intent(getApplicationContext(),LocationActivity.class);
-        intent.putExtra("latitude",latitude);//our default values are for Summit, NJ
+        intent.putExtra("latitude",latitude);//our default values are for Somerset, NJ
         intent.putExtra("longitude",longitude);
         startActivityForResult(intent, REQUEST_CODE_ONE);
         mWeatherUnit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -166,6 +166,10 @@ public class MainActivity extends AppCompatActivity {
     }
     /** Called when the user touches the button */
     public void refreshlocationweather(View view) {
+        Intent intent = new Intent(getApplicationContext(),LocationActivity.class);
+        intent.putExtra("latitude",latitude);//our default values are for Somerset, NJ
+        intent.putExtra("longitude",longitude);
+        startActivityForResult(intent, REQUEST_CODE_ONE);
         defaultWeather("Imperial", longitude, latitude);
     }
 }
