@@ -26,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView mSearchResultsTextView;
     private ProgressBar mLoadingIndicator;
     private  Switch mWeatherUnit;
+    String latitude="40.497604";//our default values are for Summit, NJ
+    String longitude="-74.488487";
 
 
     @Override
@@ -36,9 +38,13 @@ public class MainActivity extends AppCompatActivity {
                 String Latitude = data.getStringExtra("Latitude");
                 defaultWeather("Imperial",Longitude,Latitude);
             }
+            else {
+                defaultWeather("Imperial", longitude, latitude);//our default values are for Summit, NJ
+            }
         }
 
         super.onActivityResult(requestCode, resultCode, data);
+        return;
     }
 
     @Override
@@ -51,8 +57,8 @@ public class MainActivity extends AppCompatActivity {
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
         mWeatherUnit=(Switch)findViewById(R.id.s_weather_unit);
         Intent intent = new Intent(getApplicationContext(),LocationActivity.class);
-        intent.putExtra("latitude","40.497604");//our default values are for Summit, NJ
-        intent.putExtra("longitude","-74.488487");
+        intent.putExtra("latitude",latitude);//our default values are for Summit, NJ
+        intent.putExtra("longitude",longitude);
         startActivityForResult(intent, REQUEST_CODE_ONE);
         mWeatherUnit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -66,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        return;
 
     }
     private void defaultWeather(String unitValue,String longt, String lat) {

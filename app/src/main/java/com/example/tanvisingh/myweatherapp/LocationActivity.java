@@ -36,6 +36,7 @@ public class LocationActivity extends AppCompatActivity {
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
+                locationManager.removeUpdates(locationListener);
                 //txtLabel.setText("Latitude:" + location.getLongitude() + ", Longitude:" + location.getLongitude());
                 Intent intent = new Intent();
                 intent.putExtra("Longitude", String.valueOf(location.getLongitude()));
@@ -44,6 +45,7 @@ public class LocationActivity extends AppCompatActivity {
                 // intent.putExtra("Latitude", "-87.6298");
                 setResult(RESULT_OK, intent);
                 finish();
+                return;
             }
 
             @Override
@@ -75,6 +77,7 @@ public class LocationActivity extends AppCompatActivity {
         } catch (SecurityException e) {
             e.printStackTrace();
         }; //send back the default current weather
+        return;
     }
 
 
@@ -91,6 +94,7 @@ public class LocationActivity extends AppCompatActivity {
                     }
                 return;
         }
+        return;
     }
 
  /*   private void configureButton() {
