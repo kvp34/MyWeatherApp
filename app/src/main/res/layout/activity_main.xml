@@ -19,7 +19,7 @@
         android:hint="Enter a query, then click Search"
         android:textSize="22sp" />
 
-   <Switch
+    <Switch
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
        android:id="@+id/s_weather_unit"
@@ -27,6 +27,14 @@
        android:textOn="C"
        android:textOff="F"
        android:checked="false"/>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Click for weather in your current location"
+        android:onClick="refreshlocationweather"/>
+
     <TextView
         android:id="@+id/tv_current_weather"
         android:layout_width="wrap_content"

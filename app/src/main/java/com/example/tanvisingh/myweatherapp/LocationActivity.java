@@ -23,26 +23,23 @@ public class LocationActivity extends AppCompatActivity {
     private LocationListener locationListener;
     private String latitude;
     private String longitude;
-
+    //Since this is a weather application and not a location provider, we do not keep a listener for updates.
+    //We merely start a new service if we need an update, and get a current location.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // setContentView(R.layout.activity_location);
+
         latitude = getIntent().getStringExtra("latitude");
         longitude = getIntent().getStringExtra("longitude");
-       // txtLabel = (TextView) findViewById(R.id.mylocation_weather);
-        //btnTwo = (Button) findViewById(R.id.locationbutton);
+
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 locationManager.removeUpdates(locationListener);
-                //txtLabel.setText("Latitude:" + location.getLongitude() + ", Longitude:" + location.getLongitude());
                 Intent intent = new Intent();
                 intent.putExtra("Longitude", String.valueOf(location.getLongitude()));
                 intent.putExtra("Latitude", String.valueOf(location.getLatitude()));
-                //intent.putExtra("Longitude", "41.8781");  //this was for chicago!
-                // intent.putExtra("Latitude", "-87.6298");
                 setResult(RESULT_OK, intent);
                 finish();
                 return;
@@ -71,7 +68,6 @@ public class LocationActivity extends AppCompatActivity {
                 return;
             }
         }
-        //configureButton();
         try {
             locationManager.requestLocationUpdates("gps", 2000, 0, locationListener);
         } catch (SecurityException e) {
@@ -86,7 +82,6 @@ public class LocationActivity extends AppCompatActivity {
         switch (requestCode) {
             case 10:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    //configureButton();
                     try {
                         locationManager.requestLocationUpdates("gps", 2000, 0, locationListener);
                     } catch (SecurityException e) {
@@ -96,17 +91,4 @@ public class LocationActivity extends AppCompatActivity {
         }
         return;
     }
-
- /*   private void configureButton() {
-        btnTwo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    locationManager.requestLocationUpdates("gps", 2000, 0, locationListener);
-                } catch (SecurityException e) {
-                    e.printStackTrace();
-                }
-            }
-        });}
-  */
 }

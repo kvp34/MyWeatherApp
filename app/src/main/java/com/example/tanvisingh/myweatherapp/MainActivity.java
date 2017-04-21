@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mSearchResultsTextView;
     private ProgressBar mLoadingIndicator;
     private  Switch mWeatherUnit;
-    String latitude="40.497604";//our default values are for Summit, NJ
+    String latitude="40.497604";//our default values are for Somerset, NJ
     String longitude="-74.488487";
 
 
@@ -34,9 +34,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode==REQUEST_CODE_ONE) {
             if (resultCode==RESULT_OK) {
-                String Longitude = data.getStringExtra("Longitude");
-                String Latitude = data.getStringExtra("Latitude");
-                defaultWeather("Imperial",Longitude,Latitude);
+                longitude = data.getStringExtra("Longitude");  //this will be our new default current longitude
+                latitude = data.getStringExtra("Latitude"); //this will be our new default current latitude
+                defaultWeather("Imperial",longitude,latitude);
             }
             else {
                 defaultWeather("Imperial", longitude, latitude);//our default values are for Summit, NJ
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         if (lat=="")
             lat ="40.497604";
         if (longt=="")
-            longt ="-74.488487"; //Set some default values for Summit, NJ rather than nothing
+            longt ="-74.488487"; //Set some default values for Somerset, NJ rather than nothing
 
         URL weatherUrlForecast = ConnectURL.buildUrlForecastLatLong(lat,longt,unitValue);
         URL weatherUrlCurrent = ConnectURL.buildUrlCurrentLatLong(lat,longt,unitValue);
@@ -163,5 +163,9 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    /** Called when the user touches the button */
+    public void refreshlocationweather(View view) {
+        defaultWeather("Imperial", longitude, latitude);
     }
 }
