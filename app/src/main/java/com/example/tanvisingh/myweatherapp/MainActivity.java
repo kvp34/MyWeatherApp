@@ -166,10 +166,12 @@ public class MainActivity extends AppCompatActivity {
     }
     /** Called when the user touches the button */
     public void refreshlocationweather(View view) {
-        Intent intent = new Intent(getApplicationContext(),LocationActivity.class);
-        intent.putExtra("latitude",latitude);//our default values are for Somerset, NJ
-        intent.putExtra("longitude",longitude);
-        startActivityForResult(intent, REQUEST_CODE_ONE);
-        defaultWeather("Imperial", longitude, latitude);
+        if (latitude=="40.497604"&& longitude=="-74.488487") {
+            Intent intent = new Intent(getApplicationContext(), LocationActivity.class);
+            intent.putExtra("latitude", latitude);//our default values are for Somerset, NJ
+            intent.putExtra("longitude", longitude);
+            startActivityForResult(intent, REQUEST_CODE_ONE);
+        } else
+            defaultWeather("Imperial", longitude, latitude);
     }
 }
