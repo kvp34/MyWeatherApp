@@ -8,8 +8,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.HttpURLConnection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by KaranPatel on 4/10/2017.
@@ -51,13 +54,16 @@ public class ParseJsonMultiple {
             }
 
             List<WeatherDetails> list = new ArrayList<>();
-            for (int i = 0; i < listArray.length(); i++) {
+            for (int i = 1; i < listArray.length(); i++) {
                 Long max;
                 Long min;
                 WeatherDetails wd=new WeatherDetails();
                 JSONObject w = listArray.getJSONObject(i);
                 JSONObject temp=w.getJSONObject(W_TEMP);
-                wd.setDate(String.valueOf(w.getLong(W_DATE)));
+                Date expiry = new Date (w.getLong(W_DATE)*1000);
+                final String date = String.format(new SimpleDateFormat("EE, dd", Locale.US).format(expiry));
+
+                wd.setDate(date);
                 wd.setMaxTemp(String.valueOf(temp.getLong(W_MAX)));
                 wd.setMinTemp(String.valueOf(temp.getLong(W_MIN)));
                 JSONArray weatherArray=w.getJSONArray(W_WEATHER);

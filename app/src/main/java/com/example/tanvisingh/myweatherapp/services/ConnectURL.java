@@ -29,7 +29,7 @@ public class ConnectURL {
     final static String PARAM_QUERY = "q";
     final static String PARAM_UNIT="units";
     final static String PARAM_COUNT="cnt";
-    final static String COUNT_VALUE="5";
+    final static String COUNT_VALUE="6";
     final static String PARAM_LAT = "lat";
     final static String PARAM_LONG = "lon";
     public static URL buildUrlForecast(String githubSearchQuery, String unit) {
