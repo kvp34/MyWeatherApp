@@ -33,7 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Click for weather in your current location"
-        android:onClick="refreshlocationweather"/>
+        android:onClick="refreshLocationWeather"/>
 
     <TextView
         android:id="@+id/tv_current_weather"

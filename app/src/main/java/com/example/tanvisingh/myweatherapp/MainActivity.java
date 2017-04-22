@@ -1,5 +1,6 @@
 package com.example.tanvisingh.myweatherapp;
 import android.Manifest;
+import android.app.Service;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -48,44 +49,10 @@ public class MainActivity extends AppCompatActivity {
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
         mWeatherUnit=(Switch)findViewById(R.id.s_weather_unit);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);  //use the android location manager api for location
-        locationListener = new LocationListener() {  //upon location updates, this listener will be called.
-            @Override
-            public void onLocationChanged(Location location) {  //when device location changes, send values to main to get the current weather
-                locationManager.removeUpdates(locationListener);
-                myLocation = location;
-                longitude=String.valueOf(location.getLongitude());
-                latitude=String.valueOf(location.getLatitude());
-                defaultWeather("Imperial", longitude, latitude);//our default values are for Somerset, NJ
-                return;
-            }
+        locationListener = new myLocationListener();
 
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
+        startUpdatesOrGetLastLocation();
 
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-
-            }
-        };
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{
-                        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET}, 10);
-                return;
-            }
-        }
-        try {
-            locationManager.requestLocationUpdates("gps", 2000, 0, locationListener);
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        }
         mWeatherUnit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -185,36 +152,92 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
     /** Called when the user touches the button */
-    public void refreshlocationweather(View view) {
-        if (myLocation == null) {
-            try {
-                locationManager.requestLocationUpdates("gps", 2000, 0, locationListener);
-            } catch (SecurityException e) {
-                e.printStackTrace();
-            }
-        } else {
-           if (locationManager!=null) {
-               try {
-               myLocation=locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
-                } catch (SecurityException e) {
-                    e.printStackTrace();
-               }
-           }
-           if (myLocation!=null)
-                defaultWeather("Imperial", String.valueOf(myLocation.getLongitude()), String.valueOf(myLocation.getLatitude()));
-       } return;
+    public void refreshLocationWeather(View view) {
+        startUpdatesOrGetLastLocation();
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case 10:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    try {
-                        locationManager.requestLocationUpdates("gps", 2000, 0, locationListener);
-                    } catch (SecurityException e) {
-                        e.printStackTrace();
-                    }
+                    startUpdatesOrGetLastLocation();
         }
         return;
     }
+    public class myLocationListener extends Service implements LocationListener {  //upon location updates, this listener will be called.
+        @Override
+        public void onLocationChanged(Location location) {  //when device location changes, send values to main to get the current weather
+            locationManager.removeUpdates(locationListener);
+            myLocation = location;
+            longitude=String.valueOf(location.getLongitude());
+            latitude=String.valueOf(location.getLatitude());
+            defaultWeather("Imperial", String.valueOf(myLocation.getLongitude()), String.valueOf(myLocation.getLatitude()));
+            location.reset();
+            return;
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent);
+        }
+        @Override
+        public IBinder onBind(Intent arg0) {
+            return null;
+        }
+    }
+
+    public void startUpdatesOrGetLastLocation() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{
+                        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET}, 10);
+                return;
+            }
+        }
+        try {
+            locationManager.requestLocationUpdates("gps", 0, 0, locationListener);
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+        if (locationManager!=null) { //see if we can display last location before updates happen
+            try {
+                Location newLocation=locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
+                if (isLocationBetter(newLocation,myLocation)==true) {
+                    myLocation=newLocation;
+                    longitude=String.valueOf(myLocation.getLongitude());
+                    latitude=String.valueOf(myLocation.getLatitude());
+                    defaultWeather("Imperial", String.valueOf(myLocation.getLongitude()), String.valueOf(myLocation.getLatitude()));
+                } else {
+                    longitude=String.valueOf(myLocation.getLongitude());
+                    latitude=String.valueOf(myLocation.getLatitude());
+                    defaultWeather("Imperial", String.valueOf(myLocation.getLongitude()), String.valueOf(myLocation.getLatitude()));
+                };
+            } catch (SecurityException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+
+    }
+    protected boolean isLocationBetter(Location location, Location lastLocation) {
+        if (lastLocation == null)
+            return true;//so must be better
+        if ((location.getTime()-lastLocation.getTime())>1000*60*2)
+            return true; //new one must be more accurate
+        if ((location.getTime()-lastLocation.getTime())<1000*60*2)
+            return false;
+        return false; //default is that it is not better
+    }
+
 }
