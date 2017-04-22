@@ -1,5 +1,12 @@
 package com.example.tanvisingh.myweatherapp;
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.*;
 import android.widget.*;
@@ -18,34 +25,18 @@ import java.net.*;
 import java.io.*;
 import java.lang.*;
 
-//Cecilia was here
 public class MainActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_ONE = 100;
     private EditText mSearchBoxEditText;
     private TextView mCurrentWeatherTextView;
     private TextView mSearchResultsTextView;
     private ProgressBar mLoadingIndicator;
-    private  Switch mWeatherUnit;
+    private Switch mWeatherUnit;
+    private LocationManager locationManager;
+    private LocationListener locationListener;
+    private Location myLocation;
     String latitude="40.497604";//our default values are for Somerset, NJ
     String longitude="-74.488487";
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode==REQUEST_CODE_ONE) {
-            if (resultCode==RESULT_OK) {
-                longitude = data.getStringExtra("Longitude");  //this will be our new default current longitude
-                latitude = data.getStringExtra("Latitude"); //this will be our new default current latitude
-                defaultWeather("Imperial",longitude,latitude);
-            }
-            else {
-                defaultWeather("Imperial", longitude, latitude);//our default values are for Somerset, NJ
-            }
-        }
-
-        super.onActivityResult(requestCode, resultCode, data);
-        return;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,10 +47,45 @@ public class MainActivity extends AppCompatActivity {
         mSearchResultsTextView = (TextView) findViewById(R.id.tv_search_results_five_days);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
         mWeatherUnit=(Switch)findViewById(R.id.s_weather_unit);
-        Intent intent = new Intent(getApplicationContext(),LocationActivity.class);
-        intent.putExtra("latitude",latitude);//our default values are for Somerset, NJ
-        intent.putExtra("longitude",longitude);
-        startActivityForResult(intent, REQUEST_CODE_ONE);
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);  //use the android location manager api for location
+        locationListener = new LocationListener() {  //upon location updates, this listener will be called.
+            @Override
+            public void onLocationChanged(Location location) {  //when device location changes, send values to main to get the current weather
+                locationManager.removeUpdates(locationListener);
+                myLocation = location;
+                longitude=String.valueOf(location.getLongitude());
+                latitude=String.valueOf(location.getLatitude());
+                defaultWeather("Imperial", longitude, latitude);//our default values are for Somerset, NJ
+                return;
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{
+                        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET}, 10);
+                return;
+            }
+        }
+        try {
+            locationManager.requestLocationUpdates("gps", 2000, 0, locationListener);
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
         mWeatherUnit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -73,16 +99,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         return;
-
     }
-    private void defaultWeather(String unitValue,String longt, String lat) {
-        if (lat=="")
-            lat ="40.497604";
-        if (longt=="")
-            longt ="-74.488487"; //Set some default values for Somerset, NJ rather than nothing
-
-        URL weatherUrlForecast = ConnectURL.buildUrlForecastLatLong(lat,longt,unitValue);
-        URL weatherUrlCurrent = ConnectURL.buildUrlCurrentLatLong(lat,longt,unitValue);
+    private void defaultWeather(String unitValue,String longitude, String latitude) {
+        URL weatherUrlForecast = ConnectURL.buildUrlForecastLatLong(latitude,longitude,unitValue);
+        URL weatherUrlCurrent = ConnectURL.buildUrlCurrentLatLong(latitude,longitude,unitValue);
         new GithubQueryTask().execute(weatherUrlForecast,weatherUrlCurrent);
     }
     private void searchWeather(String unitValue) {
@@ -166,12 +186,35 @@ public class MainActivity extends AppCompatActivity {
     }
     /** Called when the user touches the button */
     public void refreshlocationweather(View view) {
-        if (latitude=="40.497604"&& longitude=="-74.488487") {
-            Intent intent = new Intent(getApplicationContext(), LocationActivity.class);
-            intent.putExtra("latitude", latitude);//our default values are for Somerset, NJ
-            intent.putExtra("longitude", longitude);
-            startActivityForResult(intent, REQUEST_CODE_ONE);
-        } else
-            defaultWeather("Imperial", longitude, latitude);
+        if (myLocation == null) {
+            try {
+                locationManager.requestLocationUpdates("gps", 2000, 0, locationListener);
+            } catch (SecurityException e) {
+                e.printStackTrace();
+            }
+        } else {
+           if (locationManager!=null) {
+               try {
+               myLocation=locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+               }
+           }
+           if (myLocation!=null)
+                defaultWeather("Imperial", String.valueOf(myLocation.getLongitude()), String.valueOf(myLocation.getLatitude()));
+       } return;
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 10:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                    try {
+                        locationManager.requestLocationUpdates("gps", 2000, 0, locationListener);
+                    } catch (SecurityException e) {
+                        e.printStackTrace();
+                    }
+        }
+        return;
     }
 }
