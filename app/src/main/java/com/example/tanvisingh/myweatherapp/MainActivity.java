@@ -58,9 +58,11 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked)
                 {
+                   // buttonView.setText("Celcius");
                     searchWeather("Metric");
                 }
                 else {
+                   // buttonView.setText("Farenheit");
                     searchWeather("Imperial");
                 }
             }
@@ -154,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
     /** Called when the user touches the button */
     public void refreshLocationWeather(View view) {
         startUpdatesOrGetLastLocation();
+        return;
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -190,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
         public void onProviderDisabled(String provider) {
             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             startActivity(intent);
+            return;
         }
         @Override
         public IBinder onBind(Intent arg0) {
@@ -213,6 +217,7 @@ public class MainActivity extends AppCompatActivity {
         if (locationManager!=null) { //see if we can display last location before updates happen
             try {
                 Location newLocation=locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
+                if (newLocation==null) return; //no last location, need to wait for update
                 if (isLocationBetter(newLocation,myLocation)==true) {
                     myLocation=newLocation;
                     longitude=String.valueOf(myLocation.getLongitude());
@@ -222,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
                     longitude=String.valueOf(myLocation.getLongitude());
                     latitude=String.valueOf(myLocation.getLatitude());
                     defaultWeather("Imperial", String.valueOf(myLocation.getLongitude()), String.valueOf(myLocation.getLatitude()));
-                };
+                }
             } catch (SecurityException e) {
                 e.printStackTrace();
             }
@@ -234,10 +239,10 @@ public class MainActivity extends AppCompatActivity {
         if (lastLocation == null)
             return true;//so must be better
         if ((location.getTime()-lastLocation.getTime())>1000*60*2)
-            return true; //new one must be more accurate
+            return true; //is cached one more than two minutes old?
         if ((location.getTime()-lastLocation.getTime())<1000*60*2)
-            return false;
-        return false; //default is that it is not better
+            return false; //is cached one less than two minutes old?
+        return false; //default is to use the cached one
     }
 
 }
