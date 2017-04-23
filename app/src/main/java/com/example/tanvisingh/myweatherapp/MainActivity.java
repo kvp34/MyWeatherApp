@@ -12,7 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.*;
 import android.widget.*;
 import android.view.*;
-import android.app.Activity;
 
 import com.example.tanvisingh.myweatherapp.services.ConnectURL;
 import com.example.tanvisingh.myweatherapp.services.ParseJsonCurrent;
@@ -31,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText mSearchBoxEditText;
     private TextView mCurrentWeatherTextView;
     private TextView mSearchResultsTextView;
+    private ImageView imWeatherIcon;
     private ProgressBar mLoadingIndicator;
     private Switch mWeatherUnit;
     private LocationManager locationManager;
@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mSearchBoxEditText = (EditText) findViewById(R.id.et_search_box);
+        imWeatherIcon = (ImageView) findViewById(R.id.iv_weather_icons);
         mCurrentWeatherTextView = (TextView) findViewById(R.id.tv_current_weather);
         mSearchResultsTextView = (TextView) findViewById(R.id.tv_search_results_five_days);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
@@ -133,14 +134,22 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     WeatherDetailsMultiple wdm = ParseJsonMultiple.getWeatherStringsMultiple(MainActivity.this, weatherSearchResults[0]);
                     for (int i=0;i<wdm.getMultipleDays().size();i++){
-                        result0+=wdm.getMultipleDays().get(i).getDate()+" "+wdm.getMultipleDays().get(i).getMaxTemp()+" "
-                                +wdm.getMultipleDays().get(i).getMinTemp()+" "+wdm.getMultipleDays().get(i).getWeatherMain()+" "+
-                                wdm.getMultipleDays().get(i).getWeatherIconId()+"\r\n";
+                        result0+=wdm.getMultipleDays().get(i).getDate()+"    Max: "+wdm.getMultipleDays().get(i).getMaxTemp()+" Min: "
+                                +wdm.getMultipleDays().get(i).getMinTemp()+"   Desc: "+wdm.getMultipleDays().get(i).getWeatherMain()+"\r\n";
                     }
                     WeatherDetails wd=ParseJsonCurrent.getWeatherStringsCurrent(MainActivity.this, weatherSearchResults[1]);
-                    result1= result1+"City: "+wd.getCityName()+"\r\nCurrent: "+wd.getCurrentTemp()+ "\r\nMax: "+wd.getMaxTemp()+"\r\nMin: "+wd.getMinTemp()
-                            +"\r\nHumidity: "+wd.getHumidity()+"\r\nDescription: "+wd.getWeatherMain()+"\r\nIcon: "+wd.getWeatherIconId()
-                            +"\r\nWindSpeed: "+wd.getWindSpeed();
+                    result1= result1+"City: "+wd.getCityName()+"\r\nCurrent: "+wd.getCurrentTemp()+ " Degrees\r\nMax: "+wd.getMaxTemp()+" Degrees\r\nMin: "+wd.getMinTemp()
+                            +" Degrees\r\nHumidity: "+wd.getHumidity()+ "%\r\nDescription: "+wd.getWeatherMain()
+                            +"\r\nWindSpeed: "+wd.getWindSpeed()+"mph";
+                    switch (wd.getWeatherMain()) {
+                        case "Clear": imWeatherIcon.setImageResource(R.drawable.clear); break;
+                        case "Rain": imWeatherIcon.setImageResource(R.drawable.rain); break;
+                        case "Snow": imWeatherIcon.setImageResource(R.drawable.snow); break;
+                        case "Mist": imWeatherIcon.setImageResource(R.drawable.mist); break;
+                        case "Clouds": imWeatherIcon.setImageResource(R.drawable.clouds); break;
+                        case "Extreme": imWeatherIcon.setImageResource(R.drawable.extreme); break;
+                        default: imWeatherIcon.setImageResource(R.drawable.defweathericon); break;
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -164,13 +173,13 @@ public class MainActivity extends AppCompatActivity {
             //defaultWeather("Imperial");
             return true;
         }
+        if (itemThatWasClickedId == R.id.current_location) {
+            startUpdatesOrGetLastLocation();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
-    /** Called when the user touches the button */
-    public void refreshLocationWeather(View view) {
-        startUpdatesOrGetLastLocation();
-        return;
-    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {

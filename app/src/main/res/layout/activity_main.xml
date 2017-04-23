@@ -10,6 +10,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:orientation="vertical"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="#ADD8E6"
     tools:context="com.example.tanvisingh.myweatherapp.MainActivity">
 
     <EditText
@@ -28,18 +29,27 @@
        android:textOff="F"
        android:checked="false"/>
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="match_parent"
+    <ImageView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Click for weather in your current location"
-        android:onClick="refreshLocationWeather"/>
+        android:id="@+id/iv_weather_icons"
+        android:layout_marginRight="16dp" />
 
     <TextView
         android:id="@+id/tv_current_weather"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:textStyle="bold"
+        />
+    <TextView
+        android:id="@+id/weatherforecastforfivedays"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Daily Forecast"
+        android:layout_marginTop="20dp"
+        android:textSize="20sp"
+        android:textStyle="bold"/>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
