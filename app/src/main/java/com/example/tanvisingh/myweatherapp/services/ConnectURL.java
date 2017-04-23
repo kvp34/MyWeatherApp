@@ -32,9 +32,9 @@ public class ConnectURL {
     final static String COUNT_VALUE="6";
     final static String PARAM_LAT = "lat";
     final static String PARAM_LONG = "lon";
-    public static URL buildUrlForecast(String githubSearchQuery, String unit) {
+    public static URL buildUrlForecast(String cityName, String unit) {
         Uri builtUri = Uri.parse(BASE_URL_FORECAST).buildUpon()
-                .appendQueryParameter(PARAM_QUERY, githubSearchQuery)
+                .appendQueryParameter(PARAM_QUERY, cityName)
                 .appendQueryParameter(PARAM_UNIT,unit)
                 .appendQueryParameter(PARAM_COUNT,COUNT_VALUE)
                 .build();
@@ -49,9 +49,9 @@ public class ConnectURL {
         return url;
     }
 
-    public static URL buildUrlCurrent(String githubSearchQuery, String unit) {
+    public static URL buildUrlCurrent(String cityName, String unit) {
         Uri builtUri = Uri.parse(BASE_URL_CURRENT).buildUpon()
-                .appendQueryParameter(PARAM_QUERY, githubSearchQuery)
+                .appendQueryParameter(PARAM_QUERY, cityName)
                 .appendQueryParameter(PARAM_UNIT,unit)
                 .build();
 

@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
     private Location myLocation;
     String latitude="40.497604";//our default values are for Somerset, NJ
     String longitude="-74.488487";
+    String tempUnit="Imperial";
+    boolean localweathertoggle=true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,31 +60,42 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked)
                 {
-                   // buttonView.setText("Celcius");
-                    searchWeather("Metric");
+                    buttonView.setText("Celcius");
+                    tempUnit="Metric";
+                    if (!localweathertoggle)
+                        searchWeather(tempUnit);
+                    else
+                        defaultWeather(tempUnit,longitude,latitude);
                 }
                 else {
-                   // buttonView.setText("Farenheit");
-                    searchWeather("Imperial");
+                    buttonView.setText("Fahrenheit");
+                    tempUnit="Imperial";
+                    if (!localweathertoggle)
+                        searchWeather(tempUnit);
+                    else
+                        defaultWeather(tempUnit,longitude,latitude);
                 }
             }
         });
         return;
     }
     private void defaultWeather(String unitValue,String longitude, String latitude) {
+        localweathertoggle=true;
         URL weatherUrlForecast = ConnectURL.buildUrlForecastLatLong(latitude,longitude,unitValue);
         URL weatherUrlCurrent = ConnectURL.buildUrlCurrentLatLong(latitude,longitude,unitValue);
-        new GithubQueryTask().execute(weatherUrlForecast,weatherUrlCurrent);
+        new weatherQueryTask().execute(weatherUrlForecast,weatherUrlCurrent);
+        mSearchBoxEditText.setText("");
     }
     private void searchWeather(String unitValue) {
+        localweathertoggle=false;
         String searchQuery = mSearchBoxEditText.getText().toString();
         URL weatherUrlForecast = ConnectURL.buildUrlForecast(searchQuery,unitValue);
         URL weatherUrlCurrent = ConnectURL.buildUrlCurrent(searchQuery,unitValue);
-        new GithubQueryTask().execute(weatherUrlForecast,weatherUrlCurrent);
+        new weatherQueryTask().execute(weatherUrlForecast,weatherUrlCurrent);
     }
 
 
-    public class GithubQueryTask extends AsyncTask<URL, Void, String[]> {
+    public class weatherQueryTask extends AsyncTask<URL, Void, String[]> {
 
         @Override
         protected void onPreExecute() {
@@ -147,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemThatWasClickedId = item.getItemId();
         if (itemThatWasClickedId == R.id.action_search) {
-            searchWeather("Imperial");
+            searchWeather(tempUnit);
             //defaultWeather("Imperial");
             return true;
         }
@@ -174,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
             myLocation = location;
             longitude=String.valueOf(location.getLongitude());
             latitude=String.valueOf(location.getLatitude());
-            defaultWeather("Imperial", String.valueOf(myLocation.getLongitude()), String.valueOf(myLocation.getLatitude()));
+            defaultWeather(tempUnit, String.valueOf(myLocation.getLongitude()), String.valueOf(myLocation.getLatitude()));
             location.reset();
             return;
         }
@@ -222,11 +235,11 @@ public class MainActivity extends AppCompatActivity {
                     myLocation=newLocation;
                     longitude=String.valueOf(myLocation.getLongitude());
                     latitude=String.valueOf(myLocation.getLatitude());
-                    defaultWeather("Imperial", String.valueOf(myLocation.getLongitude()), String.valueOf(myLocation.getLatitude()));
+                    defaultWeather(tempUnit, String.valueOf(myLocation.getLongitude()), String.valueOf(myLocation.getLatitude()));
                 } else {
                     longitude=String.valueOf(myLocation.getLongitude());
                     latitude=String.valueOf(myLocation.getLatitude());
-                    defaultWeather("Imperial", String.valueOf(myLocation.getLongitude()), String.valueOf(myLocation.getLatitude()));
+                    defaultWeather(tempUnit, String.valueOf(myLocation.getLongitude()), String.valueOf(myLocation.getLatitude()));
                 }
             } catch (SecurityException e) {
                 e.printStackTrace();

@@ -23,7 +23,7 @@
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
        android:id="@+id/s_weather_unit"
-       android:text="unit"
+       android:text="Fahrenheit"
        android:textOn="C"
        android:textOff="F"
        android:checked="false"/>
