@@ -30,6 +30,11 @@ public class MainActivity extends AppCompatActivity {
     private EditText mSearchBoxEditText;
     private TextView mCurrentWeatherTextView;
     private TextView mSearchResultsTextView;
+    private TextView day1;
+    private TextView day2;
+    private TextView day3;
+    private TextView day4;
+    private TextView day5;
     private ImageView imWeatherIcon;
     private ProgressBar mLoadingIndicator;
     private Switch mWeatherUnit;
@@ -39,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     String latitude="40.497604";//our default values are for Somerset, NJ
     String longitude="-74.488487";
     String tempUnit="Imperial";
-    boolean localweathertoggle=true;
+    boolean localweathertoggle = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,11 @@ public class MainActivity extends AppCompatActivity {
         imWeatherIcon = (ImageView) findViewById(R.id.iv_weather_icons);
         mCurrentWeatherTextView = (TextView) findViewById(R.id.tv_current_weather);
         mSearchResultsTextView = (TextView) findViewById(R.id.tv_search_results_five_days);
+        day1 = (TextView) findViewById(R.id.day1);
+        day2 = (TextView) findViewById(R.id.day2);
+        day3 = (TextView) findViewById(R.id.day3);
+        day4 = (TextView) findViewById(R.id.day4);
+        day5 = (TextView) findViewById(R.id.day5);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
         mWeatherUnit=(Switch)findViewById(R.id.s_weather_unit);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);  //use the android location manager api for location
@@ -135,10 +145,29 @@ public class MainActivity extends AppCompatActivity {
                     WeatherDetailsMultiple wdm = ParseJsonMultiple.getWeatherStringsMultiple(MainActivity.this, weatherSearchResults[0]);
                     for (int i=0;i<wdm.getMultipleDays().size();i++){
 
-                        result0+= wdm.getMultipleDays().get(i).getDate()
-                                +"    Max: " + wdm.getMultipleDays().get(i).getMaxTemp() + "°"
-                                +" Min: " + wdm.getMultipleDays().get(i).getMinTemp() + "°"
-                                +"   Desc: "+wdm.getMultipleDays().get(i).getWeatherMain()+ "\r\n";
+                        result0 = wdm.getMultipleDays().get(i).getDate() +"\n"
+                                +"Max: " + wdm.getMultipleDays().get(i).getMaxTemp() + "°\n"
+                                +"Min: " + wdm.getMultipleDays().get(i).getMinTemp() + "°\n"
+                                +"Desc: "+wdm.getMultipleDays().get(i).getWeatherMain()+ "\r\n";
+                        switch (i+1){
+                            case 1 :
+                                day1.setText(result0);
+                                break;
+                            case 2 :
+                                day2.setText(result0);
+                                break;
+                            case 3 :
+                                day3.setText(result0);
+                                break;
+                            case 4 :
+                                day4.setText(result0);
+                                break;
+                            case 5 :
+                                day5.setText(result0);
+                                break;
+                            default:
+                                break;
+                        }
                     }
                     WeatherDetails wd=ParseJsonCurrent.getWeatherStringsCurrent(MainActivity.this, weatherSearchResults[1]);
                     if(tempUnit == "Metric"){
@@ -149,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
                                 +" \r\nMin: "+wd.getMinTemp()+"°C"
                                 +" \r\nHumidity: "+wd.getHumidity()+ "%"
                                 +" \r\nDescription: "+wd.getWeatherMain()
-                                +"\r\nWindSpeed: "+wd.getWindSpeed()+" meter/sec";
+                                +"\r\nWindSpeed: "+wd.getWindSpeed()+" meters/sec";
                     }else{
                         result1= result1
                                 +"City: "+wd.getCityName()
@@ -173,7 +202,9 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 mCurrentWeatherTextView.setText(result1);
-                mSearchResultsTextView.setText(result0);
+                //mSearchResultsTextView.setText("Test");
+
+
             }
         }
     }
