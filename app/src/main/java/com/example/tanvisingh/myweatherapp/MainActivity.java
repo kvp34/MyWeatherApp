@@ -134,13 +134,32 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     WeatherDetailsMultiple wdm = ParseJsonMultiple.getWeatherStringsMultiple(MainActivity.this, weatherSearchResults[0]);
                     for (int i=0;i<wdm.getMultipleDays().size();i++){
-                        result0+=wdm.getMultipleDays().get(i).getDate()+"    Max: "+wdm.getMultipleDays().get(i).getMaxTemp()+" Min: "
-                                +wdm.getMultipleDays().get(i).getMinTemp()+"   Desc: "+wdm.getMultipleDays().get(i).getWeatherMain()+"\r\n";
+
+                        result0+= wdm.getMultipleDays().get(i).getDate()
+                                +"    Max: " + wdm.getMultipleDays().get(i).getMaxTemp() + "°"
+                                +" Min: " + wdm.getMultipleDays().get(i).getMinTemp() + "°"
+                                +"   Desc: "+wdm.getMultipleDays().get(i).getWeatherMain()+ "\r\n";
                     }
                     WeatherDetails wd=ParseJsonCurrent.getWeatherStringsCurrent(MainActivity.this, weatherSearchResults[1]);
-                    result1= result1+"City: "+wd.getCityName()+"\r\nCurrent: "+wd.getCurrentTemp()+ " Degrees\r\nMax: "+wd.getMaxTemp()+" Degrees\r\nMin: "+wd.getMinTemp()
-                            +" Degrees\r\nHumidity: "+wd.getHumidity()+ "%\r\nDescription: "+wd.getWeatherMain()
-                            +"\r\nWindSpeed: "+wd.getWindSpeed()+"mph";
+                    if(tempUnit == "Metric"){
+                        result1= result1
+                                + "City: "+wd.getCityName()
+                                +"\r\nCurrent: " +wd.getCurrentTemp()+ "°C"
+                                +" \r\nMax: "+wd.getMaxTemp()+"°C"
+                                +" \r\nMin: "+wd.getMinTemp()+"°C"
+                                +" \r\nHumidity: "+wd.getHumidity()+ "%"
+                                +" \r\nDescription: "+wd.getWeatherMain()
+                                +"\r\nWindSpeed: "+wd.getWindSpeed()+"m/s";
+                    }else{
+                        result1= result1
+                                +"City: "+wd.getCityName()
+                                +"\r\nCurrent: "+wd.getCurrentTemp()+ "°F"
+                                +" \r\nMax: "+wd.getMaxTemp()+"°F"
+                                +" \r\nMin: "+wd.getMinTemp()+"°F"
+                                +"\r\nHumidity: "+wd.getHumidity()+ "%"
+                                +"\r\nDescription: "+wd.getWeatherMain()
+                                +"\r\nWindSpeed: "+wd.getWindSpeed()+"m/h";
+                    }
                     switch (wd.getWeatherMain()) {
                         case "Clear": imWeatherIcon.setImageResource(R.drawable.clear); break;
                         case "Rain": imWeatherIcon.setImageResource(R.drawable.rain); break;
