@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
                                 +" \r\nMin: "+wd.getMinTemp()+"°C"
                                 +" \r\nHumidity: "+wd.getHumidity()+ "%"
                                 +" \r\nDescription: "+wd.getWeatherMain()
-                                +"\r\nWindSpeed: "+wd.getWindSpeed()+"m/s";
+                                +"\r\nWindSpeed: "+wd.getWindSpeed()+" meter/sec";
                     }else{
                         result1= result1
                                 +"City: "+wd.getCityName()
@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                                 +" \r\nMin: "+wd.getMinTemp()+"°F"
                                 +"\r\nHumidity: "+wd.getHumidity()+ "%"
                                 +"\r\nDescription: "+wd.getWeatherMain()
-                                +"\r\nWindSpeed: "+wd.getWindSpeed()+"m/h";
+                                +"\r\nWindSpeed: "+wd.getWindSpeed()+" miles/hr";
                     }
                     switch (wd.getWeatherMain()) {
                         case "Clear": imWeatherIcon.setImageResource(R.drawable.clear); break;
